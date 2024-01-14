@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class FirestoreService {
@@ -24,6 +26,23 @@ class FirestoreService {
   }
 
   // Update : Edit Note
+  Future<void> editNote(String docID, String newNote) {
+    return notes
+        .doc(docID)
+        .update({
+          'note': newNote,
+          'timestamp': Timestamp.now(),
+        })
+        .then((value) => print("Note Edited"))
+        .catchError((error) => print("Failed to edit note: $error"));
+  }
 
   // Delete : Hapus Note
+  Future<void> deleteNote(String docID) {
+    return notes
+        .doc(docID)
+        .delete()
+        .then((value) => print("Note Deleted"))
+        .catchError((error) => print("Failed to delete note: $error"));
+  }
 }

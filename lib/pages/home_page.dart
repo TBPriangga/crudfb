@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController noteController = TextEditingController();
 
   // Membuka dialog vox dari penambahan note
-  void openNoteBox() {
+  void openNoteBox({String? docID}) {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -29,8 +29,14 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                   onPressed: () {
                     // Menambahkan Note
-                    firestoreService.addNote(noteController.text);
+                    if (docID == null) {
+                      firestoreService.addNote(noteController.text);
+                    }
 
+                    // Edit Note jika docID tidak null
+                    else {
+                      firestoreService.editNote(docID, noteController.text);
+                    }
                     // Clear text controller
                     noteController.clear();
 
@@ -78,8 +84,21 @@ class _HomePageState extends State<HomePage> {
 
                 // Menampilkan dalam bentuk list
                 return ListTile(
-                  title: Text(noteText),
-                );
+                    title: Text(noteText),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Update Button
+                        IconButton(
+                          onPressed: () => openNoteBox(docID: docID),
+                          icon: const Icon(Icons.edit),
+                        ),
+                        IconButton(
+                          onPressed: () => firestoreService.deleteNote(docID),
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    ));
               },
             );
           }
